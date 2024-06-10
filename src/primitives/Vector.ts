@@ -3,7 +3,8 @@ export interface IVector {
   y: number;
   add(vector: Vector): Vector;
   scale(factor: number): Vector;
-  multiply(vector: Vector): Vector;
+  dot(vector: Vector): number;
+  subtract(vector: Vector): Vector;
 }
 
 export class Vector implements IVector {
@@ -19,11 +20,24 @@ export class Vector implements IVector {
     return new Vector(this.x + vector.x, this.y + vector.y);
   }
 
+  subtract(vector: Vector): Vector {
+    return new Vector(this.x - vector.x, this.y - vector.y);
+  }
+
   scale(factor: number): Vector {
     return new Vector(this.x * factor, this.y * factor);
   }
 
-  multiply(vector: Vector): Vector {
-    return new Vector(this.x * vector.x, this.y * vector.y);
+  dot(vector: Vector): number {
+    return this.x * vector.x + this.y * vector.y;
+  }
+
+  magnetude(): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  normalize(): Vector {
+    const mangnetude = this.magnetude();
+    return new Vector(this.x / mangnetude, this.y / mangnetude);
   }
 }

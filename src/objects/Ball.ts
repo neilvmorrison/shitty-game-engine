@@ -9,10 +9,11 @@ export type BallInit = {
   mass: number;
   drag: number;
   colorHex: string;
+  power: number;
 };
 
 export class Ball extends PhysicalObject {
-  constructor({ position, mass, drag, colorHex }: BallInit) {
+  constructor({ position, mass, drag, colorHex, power }: BallInit) {
     const [initialVelocity, initialAcceleration] = [
       new Vector(0, 0),
       new Vector(0, 0),
@@ -26,6 +27,7 @@ export class Ball extends PhysicalObject {
       height: 15,
       drag,
       colorHex,
+      power,
     });
   }
 }

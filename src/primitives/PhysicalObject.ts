@@ -1,14 +1,17 @@
-import { addVectors } from "../utils/math";
 import { Vector } from "./Vector";
 
 export interface IPhysicalObject {
+  // initial conditions
   position: Vector; // x,y coordinates
   velocity: Vector;
   acceleration: Vector;
   momentum: Vector; // computed property
+
+  //physical properties
   height: number;
   width: number;
   drag: number;
+  power: number;
 
   updatePosition(dt: number): void;
   render(context: CanvasRenderingContext2D): void;
@@ -24,6 +27,7 @@ export type PhysicalObjectInit = {
   width: number;
   drag: number;
   colorHex: string;
+  power: number;
 };
 
 export class PhysicalObject implements IPhysicalObject {
@@ -36,6 +40,7 @@ export class PhysicalObject implements IPhysicalObject {
   width: number;
   drag: number;
   colorHex: string;
+  power: number;
 
   constructor({
     position: initialPosition,
@@ -45,6 +50,7 @@ export class PhysicalObject implements IPhysicalObject {
     height,
     width,
     drag,
+    power,
     colorHex = "#ff4a55",
   }: PhysicalObjectInit) {
     this.position = initialPosition;
@@ -55,17 +61,17 @@ export class PhysicalObject implements IPhysicalObject {
     this.height = height;
     this.width = width;
     this.colorHex = colorHex;
-    this.drag = drag;
+    this.drag = drag; // catch all resistance value
+    this.power = power; // used to find thrust
   }
 
   private solvePositionEquation(dt: number) {
     let velocity = this.velocity;
     let position = this.position;
-
-    // const dragForce = 0.5 * dragCoefficient * Math.pow(velocity, 2);
-    // const thrustForce = power / velocity;
-    // const netForce = thrustForce - dragForce;
-    const acceleration = this.acceleration.scale(100 / 1000);
+    const dragForce = this.velocity.scale(-this.drag);
+    const thrustForce = this.velocity.scale(this.power / this.mass);
+    const netForce = thrustForce.add(dragForce.scale(-1));
+    const acceleration = this.acceleration.add(netForce.scale(-1));
 
     this.velocity = this.velocity.add(acceleration.scale(dt));
     position = position.add(velocity.scale(dt));

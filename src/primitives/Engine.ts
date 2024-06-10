@@ -2,6 +2,7 @@ import { Ball } from "../objects/Ball";
 import { Vehicle } from "../objects/Vehicle";
 import { CONTROL_INPUT } from "../utils/enums";
 import { CONTROL_INPUT_VALUES } from "../utils/types";
+import { PhysicalObject } from "./PhysicalObject";
 import { Vector } from "./Vector";
 
 interface IEngine {
@@ -17,6 +18,7 @@ export class Engine implements IEngine {
   context: CanvasRenderingContext2D;
   pause: boolean;
   controlInputs: CONTROL_INPUT_VALUES;
+
   private playerVehicle: Vehicle;
   private ball: Ball;
   private playerSpawn: Vector;
@@ -37,14 +39,15 @@ export class Engine implements IEngine {
       initialPosition: this.playerSpawn,
       power: 320,
       mass: 1000,
-      drag: 0.5,
+      drag: 9.75,
       colorHex: "#ff4a55",
     });
     this.ball = new Ball({
-      position: new Vector(this.canvas.height / 2, this.canvas.height / 2),
+      position: new Vector(this.canvas.width / 2, this.canvas.height / 2),
       mass: 10,
-      drag: 0,
+      drag: 1,
       colorHex: "#55a4ff",
+      power: 0,
     });
     this.initialize();
   }
@@ -83,6 +86,27 @@ export class Engine implements IEngine {
     });
   }
 
+  private solveElasticCollisions(
+    object1: PhysicalObject,
+    object2: PhysicalObject
+  ): { res1: Vector; res2: Vector } {
+    const lineOfImpact = object1.position
+      .subtract(object2.position)
+      .normalize();
+    const v_rel = object1.velocity.subtract(object2.velocity);
+    const v_rel_n = v_rel.dot(lineOfImpact);
+    const J = (2 * v_rel_n) / (1 / object1.mass + 1 / object2.mass);
+    const deltaVA = lineOfImpact.scale(-J / object1.mass);
+    const deltaVB = lineOfImpact.scale(J / object2.mass);
+
+    const vAFinal = object1.velocity.add(deltaVA);
+    const vBFinal = object2.velocity.add(deltaVB);
+    return {
+      res1: vAFinal,
+      res2: vBFinal,
+    };
+  }
+
   private checkCollisions() {
     const isCollision =
       this.playerVehicle.isCollidingWithObject(this.ball) ||
@@ -100,6 +124,15 @@ export class Engine implements IEngine {
       this.ball.updatePosition(dt);
       return;
     }
+    const { res1, res2 } = this.solveElasticCollisions(
+      this.playerVehicle,
+      this.ball
+    );
+    this.playerVehicle.velocity = res1;
+    this.ball.velocity = res2;
+
+    this.playerVehicle.updatePosition(dt);
+    this.ball.updatePosition(dt);
   }
 
   private gameLoop(timestamp: number) {

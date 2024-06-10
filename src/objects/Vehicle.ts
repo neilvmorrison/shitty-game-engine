@@ -12,8 +12,6 @@ export type VehicleInit = {
 };
 
 export class Vehicle extends PhysicalObject {
-  power: number;
-
   constructor({ initialPosition, power, mass, drag, colorHex }: VehicleInit) {
     const [initialVelocity, initialAcceleration] = [
       new Vector(0, 0),
@@ -28,8 +26,8 @@ export class Vehicle extends PhysicalObject {
       height: 50,
       drag,
       colorHex,
+      power,
     });
-    this.power = power;
   }
 
   steer(dt: number, controlInputs: CONTROL_INPUT_VALUES): void {
