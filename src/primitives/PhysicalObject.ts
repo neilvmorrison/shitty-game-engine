@@ -58,13 +58,23 @@ export class PhysicalObject implements IPhysicalObject {
     this.drag = drag;
   }
 
+  private solvePositionEquation(dt: number) {
+    let velocity = this.velocity;
+    let position = this.position;
+
+    // const dragForce = 0.5 * dragCoefficient * Math.pow(velocity, 2);
+    // const thrustForce = power / velocity;
+    // const netForce = thrustForce - dragForce;
+    const acceleration = this.acceleration.scale(100 / 1000);
+
+    this.velocity = this.velocity.add(acceleration.scale(dt));
+    position = position.add(velocity.scale(dt));
+
+    this.position = position;
+  }
+
   updatePosition(dt: number): void {
-    const nextPos = addVectors([
-      this.position,
-      this.velocity.scale(dt),
-      this.acceleration.scale(dt * dt).scale(0.5),
-    ]);
-    this.position = nextPos;
+    this.solvePositionEquation(dt);
   }
 
   isCollidingWithObject(object: IPhysicalObject): boolean {

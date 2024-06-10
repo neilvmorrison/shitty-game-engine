@@ -32,28 +32,23 @@ export class Vehicle extends PhysicalObject {
     this.power = power;
   }
 
-  private calculateAccel(): Vector {
-    return new Vector(0, 0);
-  }
-
   steer(dt: number, controlInputs: CONTROL_INPUT_VALUES): void {
-    this.velocity = new Vector(0, 0);
-    this.acceleration = new Vector(this.drag, this.drag);
+    this.acceleration = new Vector(0, 0);
 
     while (controlInputs[CONTROL_INPUT.MOVE_RIGHT]) {
-      this.velocity = new Vector(1, 0);
+      this.acceleration = new Vector(1000, 0);
       break;
     }
     while (controlInputs[CONTROL_INPUT.MOVE_LEFT]) {
-      this.velocity = new Vector(-1, 0);
+      this.acceleration = new Vector(-1000, 0);
       break;
     }
     while (controlInputs[CONTROL_INPUT.MOVE_UP]) {
-      this.velocity = new Vector(0, -1);
+      this.acceleration = new Vector(0, -1000);
       break;
     }
     while (controlInputs[CONTROL_INPUT.MOVE_DOWN]) {
-      this.velocity = new Vector(0, 1);
+      this.acceleration = new Vector(0, 1000);
       break;
     }
 
