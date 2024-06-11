@@ -5,4 +5,5 @@ export enum CONTROL_INPUT {
   MOVE_DOWN,
   TRACK_LEFT,
   TRACK_RIGHT,
+  SPACE_BAR,
 }

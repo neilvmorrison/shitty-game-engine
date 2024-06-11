@@ -1,4 +1,4 @@
-import { IPhysicalObject, PhysicalObject } from "../primitives/PhysicalObject";
+import { PhysicalObject } from "../primitives/PhysicalObject";
 import { Vector } from "../primitives/Vector";
 import { CONTROL_INPUT } from "../utils/enums";
 import { CONTROL_INPUT_VALUES } from "../utils/types";
@@ -8,11 +8,20 @@ export type VehicleInit = {
   power: number;
   mass: number;
   drag: number;
+  health: number;
   colorHex: string;
 };
 
 export class Vehicle extends PhysicalObject {
-  constructor({ initialPosition, power, mass, drag, colorHex }: VehicleInit) {
+  health: number;
+  constructor({
+    initialPosition,
+    power,
+    mass,
+    drag,
+    colorHex,
+    health,
+  }: VehicleInit) {
     const [initialVelocity, initialAcceleration] = [
       new Vector(0, 0),
       new Vector(0, 0),
@@ -28,6 +37,7 @@ export class Vehicle extends PhysicalObject {
       colorHex,
       power,
     });
+    this.health = health;
   }
 
   steer(dt: number, controlInputs: CONTROL_INPUT_VALUES): void {
@@ -51,5 +61,9 @@ export class Vehicle extends PhysicalObject {
     }
 
     this.updatePosition(dt);
+  }
+
+  takeDamage(damageVal: number): void {
+    this.health = this.health - damageVal;
   }
 }

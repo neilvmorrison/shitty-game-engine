@@ -10,7 +10,6 @@ interface IEngine {
   context: CanvasRenderingContext2D;
   pause: boolean;
   controlInputs: CONTROL_INPUT_VALUES;
-  run(): void;
 }
 
 export class Engine implements IEngine {
@@ -33,6 +32,7 @@ export class Engine implements IEngine {
       [CONTROL_INPUT.MOVE_UP]: false,
       [CONTROL_INPUT.MOVE_LEFT]: false,
       [CONTROL_INPUT.MOVE_RIGHT]: false,
+      [CONTROL_INPUT.SPACE_BAR]: false,
     };
     this.playerSpawn = new Vector(0, 0);
     this.playerVehicle = new Vehicle({
@@ -41,6 +41,7 @@ export class Engine implements IEngine {
       mass: 1000,
       drag: 9.75,
       colorHex: "#ff4a55",
+      health: 100,
     });
     this.ball = new Ball({
       position: new Vector(this.canvas.width / 2, this.canvas.height / 2),
@@ -74,6 +75,9 @@ export class Engine implements IEngine {
       case "Escape":
         this.pause = true;
         break;
+      case "Space":
+        newInputs[CONTROL_INPUT.SPACE_BAR] = value;
+        this.controlInputs = newInputs;
     }
   }
 
@@ -155,6 +159,4 @@ export class Engine implements IEngine {
     this.setupControlInputs();
     requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
   }
-
-  run(): void {}
 }
