@@ -1,9 +1,1 @@
-export enum CONTROL_INPUT {
-  MOVE_LEFT,
-  MOVE_RIGHT,
-  MOVE_UP,
-  MOVE_DOWN,
-  TRACK_LEFT,
-  TRACK_RIGHT,
-  SPACE_BAR,
-}
+

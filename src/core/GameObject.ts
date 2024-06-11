@@ -1,6 +1,7 @@
 import { v4 } from "uuid";
+import { Vector } from "../primitives/Vector";
 
-export interface IGameObject {
+interface IGameObject {
   id: string;
 }
 
